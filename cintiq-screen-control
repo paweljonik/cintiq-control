@@ -3,9 +3,28 @@
 #
 # Modify Wacom Cintiq screen settings.
 #
+__usage="
+cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile: <see below>]
 
+Color profile values:
+  1 for sRGB
+  2 for Display Native
+  4 for 5000 K
+  5 for 6500 K
+  6 for 7500 K
+  8 for 9300 K
+  11 for User 1
+"
 getprop="ddcutil --mfg=WAC getvcp"
 setprop="ddcutil --mfg=WAC setvcp"
+
+if [[ $1 == "--help" ]]
+then
+	echo "${__usage}"
+	exit
+else
+	shift
+fi
 
 case "$#" in
 1)
@@ -35,14 +54,6 @@ printf "Color:\t\t ${color}\n"
 
 # TODO:
 # arguments validation
-# Color possible values:
-#${setprop} 14 1	# sRGB (0x01)
-#${setprop} 14 2	# Display Native (0x02)
-#${setprop} 14 4	# 5000 K (0x04)
-#${setprop} 14 5	# 6500 K (0x05)
-#${setprop} 14 6	# 7500 K (0x06)
-#${setprop} 14 8	# 9300 K (0x08)
-#${setprop} 14 11	# User 1 (0x0b)
 # Other useful values:
 # Set Factory defaults
 #$setprop 04 1
@@ -50,4 +61,3 @@ printf "Color:\t\t ${color}\n"
 #$setprop 05 1
 # Set Color factory defaults:
 #$setprop 08 1
-
