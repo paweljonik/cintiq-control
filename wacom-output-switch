@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Author: Pawel Jonik https://github.com/paweljonik
+#
+# Script to switch Wacom Cintiq input between different outputs/monitors.
+#
+
+state_file="$HOME/.wacom-output-switch.state"
+monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
+cintiqs="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
+current_monitor=0
+next_monitor=$((current_monitor + 1))
+
+if [ -e "${state_file}" ]; then
+	current_monitor=$( cat "${state_file}" )
+	if [[ ${current_monitor} -eq $((monitors - 1)) ]]; then
+		next_monitor=0
+	else
+		next_monitor=$((current_monitor + 1))
+	fi
+else
+	echo "${current_monitor}" > "${state_file}"
+fi
+
+for cintiq in ${cintiqs[@]}; do
+	xsetwacom set $(echo ${cintiq} | tr -d '[:space:]' ) MapToOutput HEAD-${next_monitor}
+	echo ${next_monitor} > "${state_file}"
+done
