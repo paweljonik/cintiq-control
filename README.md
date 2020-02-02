@@ -7,4 +7,4 @@ Script to control Wacom Cintiq screen brightness, contrast and color profile. It
 1) Brightness [0-100]
 2) Contrast [0-100] and
 3) Color profile [1, 2, 4, 5, 6, 8 or 11 for for sRGB, Display Native, 5000K, 6500K, 7500K, 9300K and User 1 respectively.]
-
+cintiq-screen-control requires ddcutil and sudo or user in i2c group
