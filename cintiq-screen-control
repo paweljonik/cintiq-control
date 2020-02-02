@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Author: Pawel Jonik https://github.com/paweljonik
+#
+# Modify Wacom Cintiq screen settings.
+#
+
+getprop="ddcutil --mfg=WAC getvcp"
+setprop="ddcutil --mfg=WAC setvcp"
+
+case "$#" in
+1)
+	${setprop} 10 $1
+	;;
+2)
+	${setprop} 10 $1
+	${setprop} 12 $2
+	;;
+3)
+	${setprop} 10 $1
+	${setprop} 12 $2
+	${setprop} 14 $3
+	;;
+*)
+	;;
+esac
+
+# Get values:
+brightness="$( ${getprop} 10 | cut -c 67-69 )"
+contrast="$( ${getprop} 12 | cut -c 67-69 )"
+color="$( ${getprop} 14 | cut -c 58-72 )"
+
+printf "Brightness:\t ${brightness}\n"
+printf "Contrast:\t ${contrast}\n"
+printf "Color:\t\t ${color}\n"
+
+# TODO:
+# arguments validation
+# Color possible values:
+#${setprop} 14 1	# sRGB (0x01)
+#${setprop} 14 2	# Display Native (0x02)
+#${setprop} 14 4	# 5000 K (0x04)
+#${setprop} 14 5	# 6500 K (0x05)
+#${setprop} 14 6	# 7500 K (0x06)
+#${setprop} 14 8	# 9300 K (0x08)
+#${setprop} 14 11	# User 1 (0x0b)
+# Other useful values:
+# Set Factory defaults
+#$setprop 04 1
+# Set Brightness/Contrast factory defaults:
+#$setprop 05 1
+# Set Color factory defaults:
+#$setprop 08 1
+
