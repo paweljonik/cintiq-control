@@ -4,7 +4,7 @@
 # Script to switch Wacom Cintiq input between different outputs/monitors.
 #
 
-state_file="$HOME/.wacom-output-switch.state"
+state_file="$HOME/.cintiq-output-switch.state"
 monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
 cintiqs="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
 current_monitor=0
