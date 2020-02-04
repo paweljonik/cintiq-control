@@ -3,8 +3,8 @@
 #
 # Modify Wacom Cintiq screen settings.
 #
-__usage="
-cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile: <see below>]
+__help="
+Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
 
 Color profile values:
   1 for sRGB
@@ -15,32 +15,39 @@ Color profile values:
   8 for 9300 K
   11 for User 1
 "
+__usage="
+Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
+"
 getprop="ddcutil --mfg=WAC getvcp"
 setprop="ddcutil --mfg=WAC setvcp"
 
-if [[ $1 == "--help" ]]
-then
+case "$1" in
+"--help")
+	echo "${__help}"
+	exit
+	;;
+"--usage")
 	echo "${__usage}"
 	exit
-else
-	shift
-fi
+	;;
+esac
 
 case "$#" in
 1)
 	${setprop} 10 $1
-	;;
+;;
 2)
 	${setprop} 10 $1
 	${setprop} 12 $2
-	;;
+;;
 3)
 	${setprop} 10 $1
 	${setprop} 12 $2
 	${setprop} 14 $3
-	;;
+;;
 *)
-	;;
+	echo "$__usage"
+;;
 esac
 
 # Get values:
