@@ -14,6 +14,12 @@ Color profile values:
   6 for 7500 K
   8 for 9300 K
   11 for User 1
+
+--help			- print this message
+--usage			- print usage
+--factory-defaults	- reset to factory defaults
+--bc-defaults		- reset brightness and contrast to defaults
+--color-defaults	- reset color profile to defaults
 "
 __usage="
 Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
@@ -28,6 +34,18 @@ case "$1" in
 	;;
 "--usage")
 	echo "${__usage}"
+	exit
+	;;
+"--factory-defaults")
+	${setprop} 04 1
+	exit
+	;;
+"--bc-defaults")
+	${setprop} 05 1
+	exit
+	;;
+"--color-defaults")
+	${setprop} 08 1
 	exit
 	;;
 esac
