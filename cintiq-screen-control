@@ -3,10 +3,10 @@
 #
 # Modify Wacom Cintiq screen settings.
 #
-__help="
+__usage="
 Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
-
-Color profile values:
+"
+__help="Color profile values:
   1 for sRGB
   2 for Display Native
   4 for 5000 K
@@ -21,32 +21,34 @@ Color profile values:
 --bc-defaults		- reset brightness and contrast to defaults
 --color-defaults	- reset color profile to defaults
 "
-__usage="
-Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
-"
+
 getprop="ddcutil --mfg=WAC getvcp"
 setprop="ddcutil --mfg=WAC setvcp"
 
 case "$1" in
 "--help")
+	echo "${__usage}"
 	echo "${__help}"
 	exit
-	;;
+;;
 "--usage")
 	echo "${__usage}"
 	exit
-	;;
+;;
 "--factory-defaults")
 	${setprop} 04 1
 	exit
-	;;
+;;
 "--bc-defaults")
 	${setprop} 05 1
 	exit
-	;;
+;;
 "--color-defaults")
 	${setprop} 08 1
 	exit
+;;
+*)
+	echo "${__usage}"
 	;;
 esac
 
@@ -63,9 +65,6 @@ case "$#" in
 	${setprop} 12 $2
 	${setprop} 14 $3
 ;;
-*)
-	echo "$__usage"
-;;
 esac
 
 # Get values:
@@ -73,7 +72,7 @@ brightness="$( ${getprop} 10 | cut -c 67-69 )"
 contrast="$( ${getprop} 12 | cut -c 67-69 )"
 color="$( ${getprop} 14 | cut -c 58-72 )"
 
-printf "Brightness:\t ${brightness}\n"
+printf "\nBrightness:\t ${brightness}\n"
 printf "Contrast:\t ${contrast}\n"
 printf "Color:\t\t ${color}\n"
 
