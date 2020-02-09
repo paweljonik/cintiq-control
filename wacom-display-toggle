@@ -20,7 +20,7 @@ fi
 
 state_file="${HOME}/.wacom-display-toggle.state"
 monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
-cintiqs="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
+wacoms="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
 current_monitor=0
 next_monitor=$((current_monitor + 1))
 
@@ -31,7 +31,7 @@ if [ -e "${state_file}" ]; then
 		echo "${monitors}" >> "${state_file}"
 	fi
 	current_monitor=$( head -n1 "${state_file}" )
-	if [[ ${current_monitor} -eq $((monitors - 1)) ]]; then
+	if [[ ${current_monitor} -ge $((monitors - 1)) ]]; then
 		next_monitor=0
 	else
 		next_monitor=$((current_monitor + 1))
@@ -41,7 +41,8 @@ else
 	echo "${monitors}" >> "${state_file}"
 fi
 
-for cintiq in ${cintiqs[@]}; do
-	xsetwacom set $(echo ${cintiq} | tr -d '[:space:]' ) MapToOutput HEAD-${next_monitor}
+for wacom in ${wacoms[@]}; do
+	xsetwacom set $(echo ${wacom} | tr -d '[:space:]' ) MapToOutput HEAD-${next_monitor}
+	echo "${next_monitor}" > "${state_file}"
+	echo "${monitors}" >> "${state_file}"
 done
-echo "${monitors}" >> "${state_file}"
