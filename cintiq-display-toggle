@@ -10,8 +10,6 @@ ${0}
 Toggles Wacom Cintiq input between output displays. 
 Stores state in ~/.cintiq-display-toggle.state
 "
-getprop="ddcutil --mfg=WAC getvcp"
-setprop="ddcutil --mfg=WAC setvcp"
 
 if [[ $1 == "--help" ]]
 then
@@ -45,6 +43,5 @@ fi
 
 for cintiq in ${cintiqs[@]}; do
 	xsetwacom set $(echo ${cintiq} | tr -d '[:space:]' ) MapToOutput HEAD-${next_monitor}
-	echo "${next_monitor}" > "${state_file}"
 done
 echo "${monitors}" >> "${state_file}"
