@@ -5,10 +5,11 @@
 #
 
 __usage="
-${0}
+${0} [monitor]
 
-Toggles Wacom input between output displays. 
-Stores state in ~/.wacom-display-toggle.state
+Toggles Wacom input between output displays or 
+sets it to given [monitor] number (0 is first). 
+Stores toggle state in ~/.wacom-display-toggle.state
 "
 
 if [[ $1 == "--help" ]]
@@ -18,11 +19,26 @@ then
 fi
 
 
+
 state_file="${HOME}/.wacom-display-toggle.state"
 monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
 wacoms="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
 current_monitor=0
 next_monitor=$((current_monitor + 1))
+
+isNum="[0-9]"
+
+case "$1" in
+${isNum})
+	if [[ ${1} -le $((monitors -1)) ]]; then
+		for wacom in ${wacoms[@]}; do
+			xsetwacom set $(echo ${wacom} | tr -d '[:space:]' ) MapToOutput HEAD-${1}
+			rm ${state_file}
+			exit
+		done
+	fi
+	;;
+esac
 
 if [ -e "${state_file}" ]; then
 	if [[ ${monitors} != $( tail -n1 "${state_file}") ]]; then
