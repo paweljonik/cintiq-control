@@ -5,10 +5,10 @@
 #
 
 __usage="
-cintiq-output-switch
+${0}
 
-Switches Wacom Cintiq input between output screens. 
-Stores state in ~/.cintiq-output-switch.state
+Toggles Wacom Cintiq input between output displays. 
+Stores state in ~/.cintiq-display-toggle.state
 "
 getprop="ddcutil --mfg=WAC getvcp"
 setprop="ddcutil --mfg=WAC setvcp"
@@ -20,7 +20,7 @@ then
 fi
 
 
-state_file="$HOME/.cintiq-output-switch.state"
+state_file="$HOME/.cintiq-display-toggle.state"
 monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
 cintiqs="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
 current_monitor=0
