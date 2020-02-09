@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Author: Pawel Jonik https://github.com/paweljonik
 #
-# Script to switch Wacom Cintiq input between different outputs/monitors.
+# Script to switch Wacom input between different outputs/monitors.
 #
 
 __usage="
 ${0}
 
-Toggles Wacom Cintiq input between output displays. 
-Stores state in ~/.cintiq-display-toggle.state
+Toggles Wacom input between output displays. 
+Stores state in ~/.wacom-display-toggle.state
 "
 
 if [[ $1 == "--help" ]]
@@ -18,7 +18,7 @@ then
 fi
 
 
-state_file="${HOME}/.cintiq-display-toggle.state"
+state_file="${HOME}/.wacom-display-toggle.state"
 monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
 cintiqs="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
 current_monitor=0
