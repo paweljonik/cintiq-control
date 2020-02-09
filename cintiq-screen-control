@@ -72,9 +72,19 @@ brightness="$( ${getprop} 10 | cut -c 67-69 )"
 contrast="$( ${getprop} 12 | cut -c 67-69 )"
 color="$( ${getprop} 14 | cut -c 58-72 )"
 
-printf "\nBrightness:\t ${brightness}\n"
-printf "Contrast:\t ${contrast}\n"
-printf "Color:\t\t ${color}\n"
+# printf "\nBrightness:\t ${brightness}\n"
+# printf "Contrast:\t ${contrast}\n"
+printf "\nBrightness: \t|"
+for v in $( seq 0 $( bc <<< ${brightness}/2 ) ); do printf "■"; done	# or █
+for v in $( seq $(bc <<< ${brightness}/2 ) 50 ); do printf "·"; done
+printf "|${brightness}"
+
+printf "\nContrast: \t|"
+for v in $( seq 0 $( bc <<< ${contrast}/2 ) ); do printf "■"; done
+for v in $( seq $(bc <<< ${contrast}/2 ) 50 ); do printf "-"; done
+printf "|${contrast}\n"
+
+printf "Color:\t\t ${color}\n\n"
 
 # TODO:
 # arguments validation
