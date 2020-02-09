@@ -5,7 +5,7 @@
 #
 
 __usage="
-${0} [monitor]
+$( basename $0 ) [monitor]
 
 Toggles Wacom input between output displays or 
 sets it to given [monitor] number (0 is first). 

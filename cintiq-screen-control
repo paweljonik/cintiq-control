@@ -4,7 +4,7 @@
 # Modify Wacom Cintiq screen settings.
 #
 __usage="
-Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile]
+Usage: $( basename $0 ) [brightness: 0-100] [contrast: 0-100] [color-profile]
 "
 __help="Color profile values:
   1 for sRGB
