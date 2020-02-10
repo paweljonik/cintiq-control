@@ -19,7 +19,7 @@ Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profil
 --factory-defaults	- reset to factory defaults
 --bc-defaults		- reset brightness and contrast to defaults
 --color-defaults	- reset color profile to defaults
---brightness [0-100]- get/set brightness
+--brightness [0-100]    - get/set brightness
 --contrast [0-100]	- get/set contrast
 --color [profile]	- get/set color-profile:
 			  1 for sRGB
@@ -30,4 +30,5 @@ Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profil
 			  8 for 9300 K
 			  11 for User 1
 --rgb	[r/g/b 0-255]   - get / set R/G/B values (if set - implies User color profile)
+--sharpness [0-4]       - get / set sharpness
 ```
