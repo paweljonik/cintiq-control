@@ -1,6 +1,6 @@
 # cintiq-control
 Control your Wacom Cintiq tablet in linux
-## wacom-output-switch
+## wacom-display-toggle
 Script to toggle Wacom input between different outputs/displays. It stores state in ~/.wacom-ouput-switch.state since xsetwacom does not provide such info. It is best utilised with key-binding (e.g. [WIN]+[SPACE] in desktop-environment of your choice.
 ## cintiq-screen-control
 ```
