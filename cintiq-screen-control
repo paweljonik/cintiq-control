@@ -153,6 +153,7 @@ case "$#" in
 	${setprop} 10 $1
 	${setprop} 12 $2
 	${setprop} 14 $3
+;;
 4)
 	${setprop} 10 $1
 	${setprop} 12 $2
