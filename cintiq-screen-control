@@ -4,22 +4,27 @@
 # Modify Wacom Cintiq screen settings.
 #
 __usage="
-Usage: $( basename $0 ) [brightness: 0-100] [contrast: 0-100] [color-profile]
+Usage: $( basename $0 ) [brightness: 0-100] [contrast: 0-100] [color-profile] [sharpness]
 "
-__help="Color profile values:
-  1 for sRGB
-  2 for Display Native
-  4 for 5000 K
-  5 for 6500 K
-  6 for 7500 K
-  8 for 9300 K
-  11 for User 1
-
+__help="
 --help			- print this message
 --usage			- print usage
 --factory-defaults	- reset to factory defaults
 --bc-defaults		- reset brightness and contrast to defaults
 --color-defaults	- reset color profile to defaults
+--brightness [0-100]- get/set brightness
+--contrast [0-100]	- get/set contrast
+--color [profile]	- get/set color-profile:
+			  1 for sRGB
+			  2 for Display Native
+			  4 for 5000 K
+			  5 for 6500 K
+			  6 for 7500 K
+			  8 for 9300 K
+			  11 for User 1
+--rgb	[r/g/b 0-255]   - get / set R/G/B values (if set - implies User color profile)
+
+
 "
 
 getprop="ddcutil --mfg=WAC getvcp"
@@ -30,23 +35,107 @@ case "$1" in
 	echo "${__usage}"
 	echo "${__help}"
 	exit
-;;
+	;;
 "--usage")
 	echo "${__usage}"
 	exit
-;;
+	;;
 "--factory-defaults")
 	${setprop} 04 1
 	exit
-;;
+	;;
 "--bc-defaults")
 	${setprop} 05 1
 	exit
-;;
+	;;
 "--color-defaults")
 	${setprop} 08 1
 	exit
-;;
+	;;
+"--brightness")
+	${setprop} 10 ${2} > /dev/null 2>&1
+	brightness="$( ${getprop} 10 | cut -c 67-69 )"
+	printf "\nBrightness: |"
+	for v in $( seq 0 $( bc <<< ${brightness}/2 ) ); do printf "■"; done	# or █
+	for v in $( seq $(bc <<< ${brightness}/2 ) 50 ); do printf "-"; done
+	printf "|${brightness}/100\n\n"
+	exit
+	;;
+"--contrast")
+	${setprop} 12 ${2} > /dev/null 2>&1
+	contrast="$( ${getprop} 12 | cut -c 66-69 )"
+	printf "\nContrast: |"
+	for v in $( seq 0 $( bc <<< ${contrast}/2 ) ); do printf "■"; done	# or █
+	for v in $( seq $(bc <<< ${contrast}/2 ) 50 ); do printf "-"; done
+	printf "|${contrast}/100\n\n"
+	exit
+	;;
+"--color")
+	${setprop} 14 ${2} > /dev/null 2>&1
+	color="$( ${getprop} 14 | cut -c 58-72 )"
+	case "${color}" in
+	"User 1 (0x0b)")
+		r="$( ${getprop} 16 | cut -c 67-69 )"
+		g="$( ${getprop} 18 | cut -c 67-69 )"
+		b="$( ${getprop} 1a | cut -c 67-69 )"
+		printf "\n     Color: ["
+		printf " ${color} ]"
+		printf "\n       Red: |"
+		for v in $( seq 0 $( bc <<< ${r}*100/255/2 ) ); do printf "■"; done
+		for v in $( seq $(bc <<< ${r}*100/255/2 ) 50 ); do printf "-"; done
+		printf "|${r}/255"
+		printf "\n     Green: |"
+		for v in $( seq 0 $( bc <<< ${g}*100/255/2 ) ); do printf "■"; done
+		for v in $( seq $(bc <<< ${g}*100/255/2 ) 50 ); do printf "-"; done
+		printf "|${g}/255"
+		printf "\n      Blue: |"
+		for v in $( seq 0 $( bc <<< ${b}*100/255/2 ) ); do printf "■"; done
+		for v in $( seq $(bc <<< ${b}*100/255/2 ) 50 ); do printf "-"; done
+		printf "|${b}/255\n\n"
+		exit
+		;;
+	*)
+		printf "\n     Color: [ "
+		printf " ${color} ]\n\n"
+		exit
+		;;
+	esac
+	exit
+	;;
+"--rgb")
+	${setprop} 14 11 > /dev/null 2>&1
+	${setprop} 16 ${2} > /dev/null 2>&1
+	${setprop} 18 ${3} > /dev/null 2>&1
+	${setprop} 1a ${4} > /dev/null 2>&1
+	color="$( ${getprop} 14 | cut -c 58-72 )"
+	r="$( ${getprop} 16 | cut -c 67-69 )"
+	g="$( ${getprop} 18 | cut -c 67-69 )"
+	b="$( ${getprop} 1a | cut -c 67-69 )"
+	printf "\n     Color: ["
+	printf " ${color} ]"
+	printf "\n       Red: |"
+	for v in $( seq 0 $( bc <<< ${r}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${r}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${r}/255"
+	printf "\n     Green: |"
+	for v in $( seq 0 $( bc <<< ${g}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${g}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${g}/255"
+	printf "\n      Blue: |"
+	for v in $( seq 0 $( bc <<< ${b}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${b}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${b}/255\n\n"
+	exit
+	;;
+"--sharpness")
+	${setprop} 87 ${2} > /dev/null 2>&1
+	sharpness="$( ${getprop} 87 | cut -c 67-69 )"
+	printf "\n Sharpness: |"
+	for v in $( seq 0 $( bc <<< ${sharpness}*100/4/2 ) ); do printf "■"; done	# or █
+	for v in $( seq $(bc <<< ${sharpness}*100/4/2 ) 50 ); do printf "-"; done
+	printf "|${sharpness}/4\n\n"
+	exit
+	;;
 *)
 	echo "${__usage}"
 	;;
@@ -64,6 +153,11 @@ case "$#" in
 	${setprop} 10 $1
 	${setprop} 12 $2
 	${setprop} 14 $3
+4)
+	${setprop} 10 $1
+	${setprop} 12 $2
+	${setprop} 14 $3
+	${setprop} 87 $3
 ;;
 esac
 
@@ -71,21 +165,92 @@ esac
 brightness="$( ${getprop} 10 | cut -c 67-69 )"
 contrast="$( ${getprop} 12 | cut -c 67-69 )"
 color="$( ${getprop} 14 | cut -c 58-72 )"
+sharpness="$( ${getprop} 87 | cut -c 67-69 )"
+
+# TODO: think of other supported VCP variables:
+# 	brightness="$( ${getprop} 10 | cut -c 67-69 )"				# Brightness                    ): current value =    20, max value =   100
+# 	contrast="$( ${getprop} 12 | cut -c 67-69 )"				# Contrast                      ): current value =    40, max value =   100
+# 	color="$( ${getprop} 14 | cut -c 67-69 )"					# Select color preset           ): Setting: 5000 K (0x04)
+# 	gainR="$( ${getprop} 16 | cut -c 67-69 )"					# Video gain: Red               ): current value =   128, max value =   255
+# 	gainG="$( ${getprop} 18 | cut -c 67-69 )"					# Video gain: Green             ): current value =    96, max value =   255
+# 	gainB="$( ${getprop} 1a | cut -c 67-69 )"					# Video gain: Blue              ): current value =    64, max value =   255
+# 	phaseH="$( ${getprop} 20 | cut -c 67-69 )"					# Horizontal Position (Phase)   ): current value =    50, max value =   100
+# 	phaseV="$( ${getprop} 30 | cut -c 67-69 )"					# Vertical Position (Phase)     ): current value =    50, max value =   100
+# 	#activeControl="$( ${getprop} 52 | cut -c 67-69 )"			# Active control                ): Value: 0x32
+# 	inputsource="$( ${getprop} 60 | cut -c 67-69 )"				# Input Source                  ): DisplayPort-1 (sl=0x0f)
+# 	speakersel="$( ${getprop} 63 | cut -c 67-69 )"				# Speaker Select                ): Front L/R (sl=0x00)
+# 	blackR="$( ${getprop} 6c | cut -c 67-69 )"					# Video black level: Red        ): current value =    80, max value =   100
+# 	blackG="$( ${getprop} 6e | cut -c 67-69 )"					# Video black level: Green      ): current value =    80, max value =   100
+# 	blackB="$( ${getprop} 70 | cut -c 67-69 )"					# Video black level: Blue       ): current value =    80, max value =   100
+# 	sharpness="$( ${getprop} 87 | cut -c 67-69 )"				# Sharpness                     ): current value =     2, max value =     4
+# 	hueR="$( ${getprop} 9b | cut -c 67-69 )"					# 6 axis hue control: Red       ): current value =   128, max value =   255
+# 	hueG="$( ${getprop} 9d | cut -c 67-69 )"					# 6 axis hue control: Green     ): current value =   109, max value =   255
+# 	hueB="$( ${getprop} 9f | cut -c 67-69 )"					# 6 axis hue control: Blue      ): current value =   107, max value =   255
+# 	freH="$( ${getprop} ac | cut -c 67-69 )"					# Horizontal frequency          ): 1964 hz
+# 	freqV="$( ${getprop} ae | cut -c 67-69 )"					# Vertical frequency            ): 60.00 hz
+# 	subpixlayout="$( ${getprop} b2 | cut -c 67-69 )"			# Flat panel sub-pixel layout   ): Red/Green/Blue horizontal stripe (sl=0x02)
+# 	technology="$( ${getprop} b6 | cut -c 67-69 )"				# Display technology type       ): LCD (active matrix) (sl=0x03)
+# 	status="$( ${getprop} b7 | cut -c 67-69 )"					# Monitor status                ): Value: 0x61
+#packetCount="$( ${getprop} b8 | cut -c 67-69 )"			# Packet count                  ):   104 (0x0068)
+#originX="$( ${getprop} b9 | cut -c 67-69 )"				# Monitor X origin              ):   128 (0x0080)
+#originY="$( ${getprop} ba | cut -c 67-69 )"				# Monitor Y origin              ):   124 (0x007c)
+#headErrorCount="$( ${getprop} bb | cut -c 67-69 )"			# Header error count            ):   118 (0x0076)
+#bodyCRCerrorCount="$( ${getprop} bc | cut -c 67-69 )"		# Body CRC error count          ):   128 (0x0080)
+#clientID="$( ${getprop} bd | cut -c 67-69 )"				# Client ID                     ):   128 (0x0080)
+#linkControl="$( ${getprop} be | cut -c 67-69 )"			# Link control                  ): Link shutdown is enabled (0x6d)
+#displayDescriptorLength="$( ${getprop} c2 | cut -c 67-69 )"	# Display descriptor length     ): current value =     0, max value = 65535
+#enableDisplay="$( ${getprop} c4 | cut -c 67-69 )"			# Enable display of 'display descriptor'): mh=0xff, ml=0xff, sh=0x00,
+#applicationEnableKey="$( ${getprop} c6 | cut -c 67-69 )"	# Application enable key        ): 0x005a
+#controller="$( ${getprop} c8 | cut -c 67-69 )"				# Display controller type       ): Mfg: RealTek (sl=0x09), controller number: mh=0x00, ml=0x10, sh=0x64
+#fwLevel="$( ${getprop} c9 | cut -c 67-69 )"				# Display firmware level        ): 0.0
+#buttonControl="$( ${getprop} ca | cut -c 67-69 )"			# OSD/Button Control            ): SL: 0x01 ,  SH: 0x00
+#language="$( ${getprop} cc | cut -c 67-69 )"				# OSD Language                  ): English (sl=0x02)
+#powerMode="$( ${getprop} d6 | cut -c 67-69 )"				# Power mode                    ): DPM: On,  DPMS: Off (sl=0x01)
+#vcpVersion="$( ${getprop} df | cut -c 67-69 )"				# VCP Version                   ): 2.2
 
 # printf "\nBrightness:\t ${brightness}\n"
 # printf "Contrast:\t ${contrast}\n"
-printf "\nBrightness: \t|"
+printf "\nBrightness: |"
 for v in $( seq 0 $( bc <<< ${brightness}/2 ) ); do printf "■"; done	# or █
-for v in $( seq $(bc <<< ${brightness}/2 ) 50 ); do printf "·"; done
-printf "|${brightness}"
+for v in $( seq $(bc <<< ${brightness}/2 ) 50 ); do printf "-"; done
+printf "|${brightness}/100"
 
-printf "\nContrast: \t|"
+printf "\n  Contrast: |"
 for v in $( seq 0 $( bc <<< ${contrast}/2 ) ); do printf "■"; done
 for v in $( seq $(bc <<< ${contrast}/2 ) 50 ); do printf "-"; done
-printf "|${contrast}\n"
+printf "|${contrast}/100"
 
-printf "Color:\t\t ${color}\n\n"
+printf "\n Sharpness: |"
+for v in $( seq 0 $( bc <<< ${sharpness}*100/4/2 ) ); do printf "■"; done	# or █
+for v in $( seq $(bc <<< ${sharpness}*100/4/2 ) 50 ); do printf "-"; done
+printf "|${sharpness}/4"
 
+case "${color}" in
+"User 1 (0x0b)")
+	r="$( ${getprop} 16 | cut -c 67-69 )"
+	g="$( ${getprop} 18 | cut -c 67-69 )"
+	b="$( ${getprop} 1a | cut -c 67-69 )"
+	printf "\n     Color: ["
+	printf " ${color} ]"
+	printf "\n       Red: |"
+	for v in $( seq 0 $( bc <<< ${r}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${r}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${r}/255"
+	printf "\n     Green: |"
+	for v in $( seq 0 $( bc <<< ${g}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${g}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${g}/255"
+	printf "\n      Blue: |"
+	for v in $( seq 0 $( bc <<< ${b}*100/255/2 ) ); do printf "■"; done
+	for v in $( seq $(bc <<< ${b}*100/255/2 ) 50 ); do printf "-"; done
+	printf "|${b}/255\n"
+	;;
+*)
+	printf "\n     Color: [ "
+	printf " ${color} ]"
+	;;
+esac
+printf "\n"
 # TODO:
 # arguments validation
 # Other useful values:
