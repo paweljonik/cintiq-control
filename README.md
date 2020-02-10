@@ -13,7 +13,7 @@ Brightness: |■■■■■■----------------------------------------------| 1
       Blue: |■■■■■■■■■■■■■---------------------------------------| 64/255
 ```
 Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profile] [sharpness]
-
+```
 --help			- print this message
 --usage			- print usage
 --factory-defaults	- reset to factory defaults
@@ -30,3 +30,4 @@ Usage: cintiq-screen-control [brightness: 0-100] [contrast: 0-100] [color-profil
 			  8 for 9300 K
 			  11 for User 1
 --rgb	[r/g/b 0-255]   - get / set R/G/B values (if set - implies User color profile)
+```
