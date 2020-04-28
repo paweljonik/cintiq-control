@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # Author: Pawel Jonik https://github.com/paweljonik
 #
-# Script to switch Wacom input between different outputs/monitors.
+# Script to switch Wacom inputs between different outputs/monitors.
 #
 
 __usage="
 $( basename $0 ) [monitor]
 
-Toggles Wacom input between output displays or 
-sets it to given [monitor] number (0 is first). 
-Stores toggle state in ~/.wacom-display-toggle.state
+Toggles Wacom inputs between output displays or 
+sets them to a given [monitor] (LVDS-1 / HDMI-2 / etc.
+or HEAD-1 / HEAD-2 for NVidia drivers & XRandr <1.2.
+Map it to some hotkey for best experience :).
 "
 
 if [[ $1 == "--help" ]]
@@ -19,46 +20,16 @@ then
 fi
 
 
+wacoms="$( xsetwacom list devices | rev | cut -f 2 | cut -f 1 -d ' ' | rev )"
 
-state_file="${HOME}/.wacom-display-toggle.state"
-monitors=$(xrandr --listmonitors | grep Monitors | cut -d ' ' -f 2 )
-wacoms="$( xsetwacom list devices | cut -f 2 | cut -f 2 -d ':' )"
-current_monitor=0
-next_monitor=$((current_monitor + 1))
-
-isNum="[0-9]"
-
-case "$1" in
-${isNum})
-	if [[ ${1} -le $((monitors -1)) ]]; then
-		for wacom in ${wacoms[@]}; do
-			xsetwacom set $(echo ${wacom} | tr -d '[:space:]' ) MapToOutput HEAD-${1}
-			rm ${state_file}
-			exit
-		done
-	fi
-	;;
-esac
-
-if [ -e "${state_file}" ]; then
-	if [[ ${monitors} != $( tail -n1 "${state_file}") ]]; then
-		rm ${state_file}
-		echo "${next_monitor}" > "${state_file}"
-		echo "${monitors}" >> "${state_file}"
-	fi
-	current_monitor=$( head -n1 "${state_file}" )
-	if [[ ${current_monitor} -ge $((monitors - 1)) ]]; then
-		next_monitor=0
-	else
-		next_monitor=$((current_monitor + 1))
-	fi
+if [[ -e ${1} ]]; then
+	for wacom in ${wacoms[@]}; do
+		xsetwacom set $( echo ${wacom} | tr -d '[:space:]' ) MapToOutput ${1}
+		exit
+	done
 else
-	echo "${current_monitor}" > "${state_file}"
-	echo "${monitors}" >> "${state_file}"
+	for wacom in ${wacoms[@]}; do
+		xsetwacom set $( echo ${wacom} | tr -d '[:space:]' ) MapToOutput next
+		exit
+	done
 fi
-
-for wacom in ${wacoms[@]}; do
-	xsetwacom set $(echo ${wacom} | tr -d '[:space:]' ) MapToOutput HEAD-${next_monitor}
-	echo "${next_monitor}" > "${state_file}"
-	echo "${monitors}" >> "${state_file}"
-done
