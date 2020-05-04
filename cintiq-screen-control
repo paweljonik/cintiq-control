@@ -23,7 +23,7 @@ __help="
 			  8 for 9300 K
 			  11 for User 1
 --rgb	[r/g/b 0-255]   - get / set R/G/B values (if set - implies User color profile)
---sharpness [0-4]  	- get / set sharpness
+--sharpness [0-4]	- get / set sharpness
 "
 
 getprop="ddcutil --mfg=WAC getvcp"

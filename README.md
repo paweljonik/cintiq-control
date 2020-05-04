@@ -3,6 +3,11 @@ Control your Wacom Cintiq tablet in linux
 ## wacom-display-toggle
 Script to toggle Wacom input between different outputs/displays. It stores state in ~/.wacom-ouput-switch.state since xsetwacom does not provide such info. It is best utilised with key-binding (e.g. [WIN]+[SPACE] in desktop-environment of your choice.
 ## cintiq-screen-control
+Requires:
+- ddcutil
+- i2c
+- user in i2c group
+- for nvidia: echo "options nvidia NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100" >> /etc/modprobe.d/nvidia.conf
 ```
 Brightness: |■■■■■■----------------------------------------------| 10/100
   Contrast: |■■■■■■■■■■■■■■■■------------------------------------| 30/100
